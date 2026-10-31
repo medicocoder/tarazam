@@ -1,0 +1,12 @@
+{
+  "name": "tarazam",
+  "version": "1.0.0",
+  "description": "سامانه مدیریت حسابداری، فاکتور، انبار و گزارش سود کسب‌وکار ترازم (Tarazam PWA)",
+  "main": "index.html",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": ["accounting", "pwa", "tarazam", "offline", "persian", "jalali"],
+  "author": "Soheil",
+  "license": "MIT"
+}

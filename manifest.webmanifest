@@ -1,0 +1,20 @@
+{
+  "name": "ترازم — سامانه هوشمند حسابداری و فاکتور",
+  "short_name": "ترازم",
+  "description": "دفتر آنلاین حسابداری، ثبت فاکتور، مشتریان، انبار و تحلیل سود کسب‌وکار ترازم (Tarazam)",
+  "lang": "fa",
+  "dir": "rtl",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f7f6",
+  "theme_color": "#1a595d",
+  "icons": [
+    {
+      "src": "assets/icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
