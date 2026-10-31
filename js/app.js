@@ -1366,91 +1366,125 @@
     // SECURITY & PASSWORD LOCK (For GitHub Pages & Personal Privacy)
     // =========================================================================
 
+    // SHA-256 hash of the initial default password (plain text never stored in repo)
+    const DEFAULT_PASSWORD_HASH = '2647b246668ed557a0e2566380834e436503cdc396a83a4fd808eafc5ee4f4e8';
+
     async function hashPassword(str) {
       const buffer = new TextEncoder().encode(str);
       const hash = await crypto.subtle.digest('SHA-256', buffer);
       return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
+    async function getActivePasswordHash() {
+      const customPinObj = await TarazamStorage.getById('settings', 'security_pin');
+      return (customPinObj && customPinObj.value) ? customPinObj.value : DEFAULT_PASSWORD_HASH;
+    }
+
     async function checkSecurityLock() {
-      const storedPinObj = await TarazamStorage.getById('settings', 'security_pin');
       const lockScreen = document.getElementById('app-lock-screen');
-      const lockTitle = document.getElementById('lock-screen-title');
-      const lockDesc = document.getElementById('lock-screen-desc');
-      const confirmGroup = document.getElementById('lock-confirm-group');
-      const submitBtn = document.getElementById('btn-lock-submit');
-      const errorMsg = document.getElementById('lock-error-msg');
+      const loginSection = document.getElementById('lock-login-section');
+      const changeSection = document.getElementById('lock-change-section');
       const passInput = document.getElementById('lock-password-input');
+      const errorMsg = document.getElementById('lock-error-msg');
 
       if (passInput) passInput.value = '';
       if (errorMsg) errorMsg.style.display = 'none';
 
-      if (!storedPinObj || !storedPinObj.value) {
-        // No password set yet -> Initial Setup Mode
-        lockScreen.style.display = 'flex';
-        lockTitle.textContent = 'تعریف رمز عبور اولیه';
-        lockDesc.textContent = 'برای محافظت از سامانه در گیت‌هاب پیجز، یک رمز عبور تعیین کنید.';
-        confirmGroup.style.display = 'flex';
-        submitBtn.textContent = 'تنظیم رمز عبور و ورود';
-        return;
-      }
-
-      // Check if session is already authenticated
+      // Check if session is already authenticated in this browser tab
       const sessionAuth = sessionStorage.getItem('tarazam_auth');
       if (sessionAuth === 'true') {
         lockScreen.style.display = 'none';
         return;
       }
 
-      // Normal Unlock Mode
+      // Show lock screen
       lockScreen.style.display = 'flex';
-      lockTitle.textContent = 'ورود به سامانه ترازم';
-      lockDesc.textContent = 'برای مشاهده و مدیریت اطلاعات مالی، رمز عبور را وارد کنید.';
-      confirmGroup.style.display = 'none';
-      submitBtn.textContent = 'ورود به برنامه';
+      loginSection.style.display = 'block';
+      changeSection.style.display = 'none';
     }
 
-    // Lock Form Submit Handler
+    // Lock Form Submit Handler (Unlock app)
     document.getElementById('lock-form')?.addEventListener('submit', async e => {
       e.preventDefault();
       const pass = document.getElementById('lock-password-input')?.value;
-      const confirmPass = document.getElementById('lock-confirm-input')?.value;
       const errorMsg = document.getElementById('lock-error-msg');
       const lockScreen = document.getElementById('app-lock-screen');
 
-      const storedPinObj = await TarazamStorage.getById('settings', 'security_pin');
+      const activeHash = await getActivePasswordHash();
+      const enteredHash = await hashPassword(pass);
 
-      if (!storedPinObj || !storedPinObj.value) {
-        // Setting up initial password
-        if (!pass || pass.length < 4) {
-          errorMsg.textContent = 'رمز عبور باید حداقل ۴ کاراکتر باشد.';
-          errorMsg.style.display = 'block';
-          return;
-        }
-        if (pass !== confirmPass) {
-          errorMsg.textContent = 'تکرار رمز عبور با رمز وارد شده همخوانی ندارد.';
-          errorMsg.style.display = 'block';
-          return;
-        }
-
-        const hashed = await hashPassword(pass);
-        await TarazamStorage.saveItem('settings', { key: 'security_pin', value: hashed });
+      if (enteredHash === activeHash) {
         sessionStorage.setItem('tarazam_auth', 'true');
         lockScreen.style.display = 'none';
-        showToast('رمز عبور با موفقیت تعریف شد. خوش آمدید!');
+        showToast('خوش آمدید!');
       } else {
-        // Verification mode
-        const hashed = await hashPassword(pass);
-        if (hashed === storedPinObj.value) {
-          sessionStorage.setItem('tarazam_auth', 'true');
-          lockScreen.style.display = 'none';
-          showToast('خوش آمدید!');
-        } else {
-          errorMsg.textContent = 'رمز عبور اشتباه است.';
-          errorMsg.style.display = 'block';
-          document.getElementById('lock-password-input').focus();
-        }
+        errorMsg.textContent = 'رمز عبور اشتباه است.';
+        errorMsg.style.display = 'block';
+        document.getElementById('lock-password-input').focus();
       }
+    });
+
+    // Toggle Change Password view on Lock Screen
+    document.getElementById('btn-show-change-pass')?.addEventListener('click', () => {
+      document.getElementById('lock-login-section').style.display = 'none';
+      const changeSection = document.getElementById('lock-change-section');
+      changeSection.style.display = 'block';
+      document.getElementById('lock-change-form').reset();
+      document.getElementById('lock-change-error').style.display = 'none';
+      document.getElementById('lock-change-success').style.display = 'none';
+    });
+
+    document.getElementById('btn-back-to-login')?.addEventListener('click', () => {
+      document.getElementById('lock-change-section').style.display = 'none';
+      document.getElementById('lock-login-section').style.display = 'block';
+    });
+
+    // Change Password on Lock Screen Submit Handler
+    document.getElementById('lock-change-form')?.addEventListener('submit', async e => {
+      e.preventDefault();
+      const currPass = document.getElementById('change-curr-pass')?.value;
+      const newPass = document.getElementById('change-new-pass')?.value;
+      const confirmPass = document.getElementById('change-confirm-pass')?.value;
+
+      const errEl = document.getElementById('lock-change-error');
+      const succEl = document.getElementById('lock-change-success');
+      errEl.style.display = 'none';
+      succEl.style.display = 'none';
+
+      const activeHash = await getActivePasswordHash();
+      const currHashed = await hashPassword(currPass);
+
+      if (currHashed !== activeHash) {
+        errEl.textContent = 'رمز عبور فعلی اشتباه است.';
+        errEl.style.display = 'block';
+        return;
+      }
+
+      if (!newPass || newPass.length < 4) {
+        errEl.textContent = 'رمز عبور جدید باید حداقل ۴ کاراکتر باشد.';
+        errEl.style.display = 'block';
+        return;
+      }
+
+      if (newPass !== confirmPass) {
+        errEl.textContent = 'تکرار رمز عبور جدید همخوانی ندارد.';
+        errEl.style.display = 'block';
+        return;
+      }
+
+      // Save new hash locally in this browser (never committed to Git)
+      const newHash = await hashPassword(newPass);
+      await TarazamStorage.saveItem('settings', { key: 'security_pin', value: newHash });
+
+      succEl.textContent = 'رمز عبور جدید با موفقیت در این دستگاه ذخیره شد!';
+      succEl.style.display = 'block';
+
+      setTimeout(() => {
+        document.getElementById('lock-change-section').style.display = 'none';
+        document.getElementById('lock-login-section').style.display = 'block';
+        document.getElementById('lock-password-input').value = newPass;
+        document.getElementById('btn-lock-submit').click();
+      }, 1200);
     });
 
     // Lock Button in Header
@@ -1466,7 +1500,7 @@
       input.type = input.type === 'password' ? 'text' : 'password';
     });
 
-    // Change Password in Settings
+    // Change Password in Settings Tab
     document.getElementById('btn-save-password')?.addEventListener('click', async () => {
       const newPass = document.getElementById('setting-new-pass')?.value;
       const confirmPass = document.getElementById('setting-confirm-pass')?.value;
@@ -1482,7 +1516,7 @@
       await TarazamStorage.saveItem('settings', { key: 'security_pin', value: hashed });
       document.getElementById('setting-new-pass').value = '';
       document.getElementById('setting-confirm-pass').value = '';
-      showToast('رمز عبور جدید با موفقیت ذخیره شد.');
+      showToast('رمز عبور جدید با موفقیت در این دستگاه ذخیره شد.');
     });
 
     // Check Security Lock on Start

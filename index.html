@@ -660,31 +660,70 @@
 <div id="app-lock-screen" class="lock-screen-overlay" style="display: none;">
   <div class="lock-card">
     <div class="brand-icon" style="width: 54px; height: 54px; font-size: 26px; margin: 0 auto 16px;">ت</div>
-    <h2 id="lock-screen-title" style="font-size: 20px; font-weight: 800; color: var(--primary); margin-bottom: 8px;">ورود به سامانه ترازم</h2>
-    <p id="lock-screen-desc" style="font-size: 13px; color: var(--text-muted); margin-bottom: 24px;">برای مشاهده و مدیریت اطلاعات مالی، رمز عبور را وارد کنید.</p>
+    <h2 style="font-size: 20px; font-weight: 800; color: var(--primary); margin-bottom: 8px;">سامانه حسابداری ترازم</h2>
     
-    <form id="lock-form" style="display: flex; flex-direction: column; gap: 14px;">
-      <div class="form-group" style="text-align: right;">
-        <label for="lock-password-input" id="lock-pass-label">رمز عبور</label>
-        <div style="position: relative;">
-          <input type="password" id="lock-password-input" placeholder="رمز عبور..." required style="width: 100%; padding-left: 36px; font-size: 15px;">
-          <button type="button" id="btn-toggle-lock-pass" style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); font-size: 14px; background: none; border: none; cursor: pointer; color: var(--text-muted);">
-            👁
-          </button>
+    <!-- State 1: Login Form -->
+    <div id="lock-login-section">
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 24px;">برای دسترسی به اطلاعات مالی، رمز عبور را وارد کنید.</p>
+      
+      <form id="lock-form" style="display: flex; flex-direction: column; gap: 14px;">
+        <div class="form-group" style="text-align: right;">
+          <label for="lock-password-input">رمز عبور</label>
+          <div style="position: relative;">
+            <input type="password" id="lock-password-input" placeholder="رمز عبور..." required style="width: 100%; padding-left: 36px; font-size: 15px;">
+            <button type="button" id="btn-toggle-lock-pass" style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); font-size: 14px; background: none; border: none; cursor: pointer; color: var(--text-muted);">
+              👁
+            </button>
+          </div>
         </div>
-      </div>
 
-      <div id="lock-confirm-group" class="form-group" style="text-align: right; display: none;">
-        <label for="lock-confirm-input">تکرار رمز عبور</label>
-        <input type="password" id="lock-confirm-input" placeholder="تکرار رمز عبور..." style="width: 100%; font-size: 15px;">
-      </div>
+        <div id="lock-error-msg" style="color: var(--danger); font-size: 12.5px; display: none; font-weight: 600;"></div>
 
-      <div id="lock-error-msg" style="color: var(--danger); font-size: 12.5px; display: none; font-weight: 600;"></div>
+        <button type="submit" id="btn-lock-submit" class="btn btn-primary" style="padding: 12px; font-size: 15px; margin-top: 6px;">
+          ورود به برنامه
+        </button>
 
-      <button type="submit" id="btn-lock-submit" class="btn btn-primary" style="padding: 12px; font-size: 15px; margin-top: 6px;">
-        ورود به برنامه
-      </button>
-    </form>
+        <button type="button" id="btn-show-change-pass" style="background: none; border: none; color: var(--accent); font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 8px; text-decoration: underline;">
+          تغییر رمز عبور در این دستگاه
+        </button>
+      </form>
+    </div>
+
+    <!-- State 2: Change Password Form (Directly on lock screen) -->
+    <div id="lock-change-section" style="display: none;">
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
+        رمز جدید فقط در حافظه مرورگر همین دستگاه ذخیره می‌شود و در ریپازیتوری دیده نخواهد شد.
+      </p>
+
+      <form id="lock-change-form" style="display: flex; flex-direction: column; gap: 12px; text-align: right;">
+        <div class="form-group">
+          <label for="change-curr-pass">رمز عبور فعلی</label>
+          <input type="password" id="change-curr-pass" placeholder="رمز فعلی..." required style="width: 100%; font-size: 14px;">
+        </div>
+
+        <div class="form-group">
+          <label for="change-new-pass">رمز عبور جدید</label>
+          <input type="password" id="change-new-pass" placeholder="رمز جدید (حداقل ۴ کاراکتر)..." required style="width: 100%; font-size: 14px;">
+        </div>
+
+        <div class="form-group">
+          <label for="change-confirm-pass">تکرار رمز عبور جدید</label>
+          <input type="password" id="change-confirm-pass" placeholder="تکرار رمز جدید..." required style="width: 100%; font-size: 14px;">
+        </div>
+
+        <div id="lock-change-error" style="color: var(--danger); font-size: 12.5px; display: none; font-weight: 600;"></div>
+        <div id="lock-change-success" style="color: var(--success); font-size: 12.5px; display: none; font-weight: 600;"></div>
+
+        <button type="submit" class="btn btn-primary" style="padding: 11px; font-size: 14px; margin-top: 6px;">
+          ذخیره رمز عبور جدید
+        </button>
+
+        <button type="button" id="btn-back-to-login" class="btn btn-secondary" style="padding: 9px; font-size: 13px;">
+          بازگشت به صفحه ورود
+        </button>
+      </form>
+    </div>
+
   </div>
 </div>
 
