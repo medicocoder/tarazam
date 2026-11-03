@@ -182,6 +182,9 @@
         if (inv.remainingBalance) {
           totalOutstandingDebt += inv.remainingBalance;
         }
+      } else if (inv.kind === 'settlement') {
+        // Settlement reduces outstanding debt and adds to collected settlements
+        totalOutstandingDebt = Math.max(0, totalOutstandingDebt - (inv.paidAmount || 0));
       } else if (inv.kind === 'purchase') {
         totalPurchases += (inv.grandTotal || inv.currentOrder || 0);
       } else if (inv.kind === 'expense') {
@@ -190,6 +193,14 @@
         if (/پیک|اسنپ|کرایه|حمل|باربری/.test(inv.partyName + ' ' + (inv.notes || ''))) {
           totalShippingPaid += expTotal;
         }
+      }
+    });
+
+    // Adjust customer outstanding debts by settlements in period
+    filteredInvoices.forEach(inv => {
+      if (inv.kind === 'settlement' && inv.partyName && customerStats.has(inv.partyName)) {
+        const cStat = customerStats.get(inv.partyName);
+        cStat.currentDebt = Math.max(0, cStat.currentDebt - (inv.paidAmount || 0));
       }
     });
 

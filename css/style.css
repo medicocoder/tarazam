@@ -751,19 +751,37 @@ tbody tr:last-child td {
 
 /* Print Styles */
 @media print {
-  .sidebar, .top-header, .bottom-nav, .btn, .no-print {
+  .sidebar, .top-header, .bottom-nav, .btn, .no-print, #btn-lock-app, .header-left {
     display: none !important;
   }
   .main-wrapper {
     margin: 0 !important;
+    padding: 0 !important;
   }
   body {
     background: #ffffff !important;
+    color: #000000 !important;
   }
   .card {
     box-shadow: none !important;
     border: none !important;
     padding: 0 !important;
+  }
+  .modal-overlay {
+    position: static !important;
+    background: #ffffff !important;
+    padding: 0 !important;
+    display: block !important;
+  }
+  .modal-content {
+    max-width: 100% !important;
+    width: 100% !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+  }
+  .modal-header button, .modal-footer {
+    display: none !important;
   }
 }
 

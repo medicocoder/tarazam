@@ -320,13 +320,15 @@
     ];
 
     const rows = invoices.map(inv => {
-      const itemsSummary = (inv.items || [])
-        .map(i => `${i.name || ''} (${i.qty || 1} عدد به فی ${i.price || 0})`)
-        .join(' + ');
+      const itemsSummary = inv.kind === 'settlement'
+        ? (inv.referenceNo ? `شماره پیگیری: ${inv.referenceNo}` : 'تسویه / دریافت وجه نسیه')
+        : (inv.items || [])
+            .map(i => `${i.name || ''} (${i.qty || 1} عدد به فی ${i.price || 0})`)
+            .join(' + ');
 
       return [
         inv.id || '',
-        inv.kind === 'sale' ? 'فروش' : inv.kind === 'purchase' ? 'خرید' : 'هزینه',
+        inv.kind === 'sale' ? 'فروش' : inv.kind === 'purchase' ? 'خرید' : inv.kind === 'settlement' ? 'دریافت وجه / تسویه' : 'هزینه',
         inv.date || '',
         `"${(inv.partyName || '').replace(/"/g, '""')}"`,
         `"${(inv.partyCategory || '').replace(/"/g, '""')}"`,

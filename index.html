@@ -111,19 +111,48 @@
             </div>
           </div>
 
-          <!-- Document Kind Switcher (Sale, Purchase, Expense) -->
-          <div class="form-mode-tabs">
-            <button type="button" class="form-mode-tab active" data-kind="sale">فاکتور فروش (مشتریان)</button>
-            <button type="button" class="form-mode-tab" data-kind="purchase">فاکتور خرید (تأمین‌کننده)</button>
-            <button type="button" class="form-mode-tab" data-kind="expense">ثبت هزینه (جاری، پیک، لوازم)</button>
+          <!-- Document Kind Switcher (Sale, Purchase, Expense, Settlement) -->
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 16px;">
+            <div class="form-mode-tabs" style="margin-bottom: 0; flex: 1; min-width: 320px;">
+              <button type="button" class="form-mode-tab active" data-kind="sale">فاکتور فروش (مشتریان)</button>
+              <button type="button" class="form-mode-tab" data-kind="purchase">فاکتور خرید (تأمین‌کننده)</button>
+              <button type="button" class="form-mode-tab" data-kind="expense">ثبت هزینه (جاری، پیک...)</button>
+              <button type="button" class="form-mode-tab" data-kind="settlement">دریافت وجه / تسویه نسیه</button>
+            </div>
+
+            <button type="button" id="btn-toggle-form-settings" class="btn btn-sm btn-secondary" style="display: flex; align-items: center; gap: 6px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              <span>شخصی‌سازی فیلدهای فرم</span>
+            </button>
           </div>
 
-          <!-- Invoice Form Layout Switcher (Custom vs Tarazak Default) -->
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-            <span style="font-size: 13px; color: var(--text-muted);">قالب فرم فاکتور:</span>
-            <div style="display: flex; gap: 8px;">
-              <button type="button" id="toggle-form-custom" class="btn btn-sm btn-primary">مدل اختصاصی (پیشرفته با سفارش و حساب قبلی)</button>
-              <button type="button" id="toggle-form-tarazak" class="btn btn-sm btn-secondary">مدل ساده ترازم</button>
+          <!-- Collapsible Form Customization Panel -->
+          <div id="form-settings-panel" style="display: none; background: #f8fafc; border: 1px dashed var(--border-color); border-radius: 8px; padding: 14px 18px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <span style="font-size: 13.5px; font-weight: 700; color: var(--primary);">تنظیم فیلدهای اختیاری فاکتور:</span>
+              <span style="font-size: 11.5px; color: var(--text-muted);">تغییرات به طور خودکار در مرورگر ذخیره می‌شود</span>
+            </div>
+            <div style="display: flex; gap: 18px; flex-wrap: wrap;">
+              <label style="display: flex; align-items: center; gap: 6px; font-size: 13px; cursor: pointer;">
+                <input type="checkbox" id="pref-show-shipping" checked>
+                هزینه ارسال / کرایه پیک
+              </label>
+              <label style="display: flex; align-items: center; gap: 6px; font-size: 13px; cursor: pointer;">
+                <input type="checkbox" id="pref-show-prev-balance" checked>
+                حساب قبلی مشتری
+              </label>
+              <label style="display: flex; align-items: center; gap: 6px; font-size: 13px; cursor: pointer;">
+                <input type="checkbox" id="pref-show-category" checked>
+                دسته‌بندی طرف‌حساب
+              </label>
+              <label style="display: flex; align-items: center; gap: 6px; font-size: 13px; cursor: pointer;">
+                <input type="checkbox" id="pref-show-item-category" checked>
+                ستون دسته کالا (A / +A)
+              </label>
+              <label style="display: flex; align-items: center; gap: 6px; font-size: 13px; cursor: pointer;">
+                <input type="checkbox" id="pref-show-notes" checked>
+                یادداشت و توضیحات
+              </label>
             </div>
           </div>
 
@@ -131,7 +160,6 @@
           <form id="invoice-form">
             <input type="hidden" id="f-edit-id" value="">
             <input type="hidden" id="f-kind" value="sale">
-            <input type="hidden" id="f-mode" value="custom">
 
             <!-- Header fields -->
             <div class="form-grid-3">
@@ -139,6 +167,7 @@
                 <label for="f-party">طرف حساب (نام مشتری / فروشنده) <span class="required">*</span></label>
                 <input type="text" id="f-party" list="parties-list" placeholder="نام کافه، بستنی‌فروشی یا شخص..." required autocomplete="off">
                 <datalist id="parties-list"></datalist>
+                <div id="party-balance-badge" style="display: none; margin-top: 6px; font-size: 12.5px; padding: 6px 10px; border-radius: 6px;"></div>
               </div>
 
               <div class="form-group" id="f-group-category">
@@ -148,13 +177,13 @@
               </div>
 
               <div class="form-group">
-                <label for="f-date">تاریخ فاکتور (شمسی) <span class="required">*</span></label>
+                <label for="f-date">تاریخ سند (شمسی) <span class="required">*</span></label>
                 <input type="text" id="f-date" placeholder="1405/07/01" class="num" required>
               </div>
             </div>
 
-            <!-- Items Table -->
-            <div style="margin-top: 16px;">
+            <!-- Items Table Section (Hidden for settlement) -->
+            <div id="invoice-items-section">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                 <label style="font-weight: 700; font-size: 14px;">اقلام فاکتور:</label>
                 <button type="button" id="btn-add-item-row" class="btn btn-sm btn-secondary">
@@ -168,7 +197,7 @@
                   <thead>
                     <tr>
                       <th style="width: 25%;">نام کالا / شرح</th>
-                      <th style="width: 15%;">دسته محصول</th>
+                      <th class="col-item-cat" style="width: 15%;">دسته محصول</th>
                       <th style="width: 15%;">تعداد / مقدار</th>
                       <th style="width: 20%;">فی فروش (تومان)</th>
                       <th style="width: 20%;">بهای کل (تومان)</th>
@@ -181,49 +210,88 @@
                 </table>
               </div>
               <datalist id="products-list"></datalist>
-            </div>
 
-            <!-- Custom Form Extra Fields (Current Order, Shipping, Prev Balance, Paid, Remaining) -->
-            <div id="custom-fields-container" style="margin-top: 24px;">
-              <div class="form-grid-3">
-                <div class="form-group">
-                  <label for="f-shipping">هزینه ارسال / کرایه پیک (تومان)</label>
-                  <input type="text" id="f-shipping" class="num" placeholder="0">
-                  <span style="font-size: 11px; color: var(--text-muted);">به جمع فاکتور افزوده می‌شود</span>
+              <!-- Extra invoice fields -->
+              <div id="custom-fields-container" style="margin-top: 24px;">
+                <div class="form-grid-3">
+                  <div class="form-group" id="f-group-shipping">
+                    <label for="f-shipping">هزینه ارسال / کرایه پیک (تومان)</label>
+                    <input type="text" id="f-shipping" class="num" placeholder="0">
+                    <span style="font-size: 11px; color: var(--text-muted);">به جمع فاکتور افزوده می‌شود</span>
+                  </div>
+
+                  <div class="form-group" id="f-group-prev-balance">
+                    <label for="f-prev-balance">حساب قبلی مشتری (بدهی از قبل - تومان)</label>
+                    <input type="text" id="f-prev-balance" class="num" placeholder="0">
+                    <span style="font-size: 11px; color: var(--danger);">در جمع فروش این ماه محاسبه نمی‌شود</span>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="f-current-order">سفارش فعلی (جمع اقلام - تومان)</label>
+                    <input type="text" id="f-current-order" class="num" placeholder="0" readonly style="background: #f8fafc; font-weight: 700;">
+                  </div>
                 </div>
 
-                <div class="form-group">
-                  <label for="f-prev-balance">حساب قبلی مشتری (بدهی از قبل - تومان)</label>
-                  <input type="text" id="f-prev-balance" class="num" placeholder="0">
-                  <span style="font-size: 11px; color: var(--danger);">در جمع فروش این ماه محاسبه نمی‌شود</span>
-                </div>
+                <div class="form-grid-3" style="margin-top: 10px;">
+                  <div class="form-group">
+                    <label for="f-paid">مبلغ پرداخت‌شده نقدی / واریزی (تومان)</label>
+                    <input type="text" id="f-paid" class="num" placeholder="0">
+                  </div>
 
-                <div class="form-group">
-                  <label for="f-current-order">سفارش فعلی (جمع اقلام - تومان)</label>
-                  <input type="text" id="f-current-order" class="num" placeholder="0" readonly style="background: #f8fafc; font-weight: 700;">
+                  <div class="form-group">
+                    <label for="f-pay-method">روش پرداخت</label>
+                    <select id="f-pay-method">
+                      <option value="نسیه">نسیه (پیش‌فرض)</option>
+                      <option value="کارتخوان">کارتخوان</option>
+                      <option value="کارت‌به‌کارت">کارت‌به‌کارت</option>
+                      <option value="نقد">نقد</option>
+                      <option value="چک">چک</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group" id="f-group-notes">
+                    <label for="f-notes">یادداشت فاکتور</label>
+                    <input type="text" id="f-notes" placeholder="توضیحات اختیاری...">
+                  </div>
                 </div>
               </div>
+            </div>
 
-              <div class="form-grid-3" style="margin-top: 10px;">
-                <div class="form-group">
-                  <label for="f-paid">مبلغ پرداخت‌شده نقدی / واریزی (تومان)</label>
-                  <input type="text" id="f-paid" class="num" placeholder="0">
+            <!-- Settlement Section (Visible only when kind === 'settlement') -->
+            <div id="settlement-fields-section" style="display: none; margin-top: 16px;">
+              <div class="card" style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 18px;">
+                <div style="display: flex; align-items: center; gap: 8px; color: #166534; font-weight: 700; font-size: 15px; margin-bottom: 14px;">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>
+                  <span>ثبت دریافت وجه واریزی / تسویه حساب نسیه مشتری</span>
                 </div>
 
-                <div class="form-group">
-                  <label for="f-pay-method">روش پرداخت</label>
-                  <select id="f-pay-method">
-                    <option value="نسیه">نسیه (پیش‌فرض)</option>
-                    <option value="کارتخوان">کارتخوان</option>
-                    <option value="کارت‌به‌کارت">کارت‌به‌کارت</option>
-                    <option value="نقد">نقد</option>
-                    <option value="چک">چک</option>
-                  </select>
+                <div class="form-grid-3">
+                  <div class="form-group">
+                    <label for="f-settle-amount">مبلغ دریافتی (تومان) <span class="required">*</span></label>
+                    <input type="text" id="f-settle-amount" class="num" placeholder="0" style="font-size: 16px; font-weight: 700; color: #166534;">
+                    <div id="settle-quick-action" style="margin-top: 6px;"></div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="f-settle-method">روش دریافت وجه</label>
+                    <select id="f-settle-method">
+                      <option value="کارت‌به‌کارت">کارت‌به‌کارت (واریز بانکی)</option>
+                      <option value="کارتخوان">کارتخوان (دستگاه POS)</option>
+                      <option value="نقد">نقد</option>
+                      <option value="چک صیادی">چک صیادی</option>
+                      <option value="حواله پایا/ساتنا">حواله پایا / ساتنا</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="f-settle-ref">شماره پیگیری / ارجاع بانکی</label>
+                    <input type="text" id="f-settle-ref" placeholder="شماره پیگیری فیش، ۴ رقم کارت...">
+                  </div>
                 </div>
 
-                <div class="form-group">
-                  <label for="f-notes">یادداشت فاکتور</label>
-                  <input type="text" id="f-notes" placeholder="توضیحات اختیاری...">
+                <div class="form-group" style="margin-top: 10px;">
+                  <label for="f-settle-notes">بابت / توضیحات دریافت وجه</label>
+                  <input type="text" id="f-settle-notes" placeholder="مثال: تسویه فاکتور هفته پیش، بخشی از بدهی باقلوا...">
                 </div>
               </div>
             </div>
@@ -240,12 +308,12 @@
                 </button>
               </div>
 
-              <div class="invoice-summary-box">
-                <div class="summary-row">
+              <div class="invoice-summary-box" id="invoice-summary-box">
+                <div class="summary-row" id="sum-row-order">
                   <span>سفارش فعلی:</span>
                   <span id="sum-order" class="num">۰ تومان</span>
                 </div>
-                <div class="summary-row">
+                <div class="summary-row" id="sum-row-shipping">
                   <span>هزینه ارسال:</span>
                   <span id="sum-shipping" class="num">۰ تومان</span>
                 </div>
@@ -253,11 +321,11 @@
                   <span>حساب قبلی:</span>
                   <span id="sum-prev" class="num">۰ تومان</span>
                 </div>
-                <div class="summary-row grand-total">
+                <div class="summary-row grand-total" id="sum-row-grand">
                   <span>جمع کل فاکتور:</span>
                   <span id="sum-grand" class="num">۰ تومان</span>
                 </div>
-                <div class="summary-row remaining">
+                <div class="summary-row remaining" id="sum-row-remaining">
                   <span>مانده حساب (نسیه):</span>
                   <span id="sum-remaining" class="num">۰ تومان</span>
                 </div>
@@ -323,6 +391,7 @@
               <option value="sale">فقط فروش</option>
               <option value="purchase">فقط خرید</option>
               <option value="expense">فقط هزینه‌ها</option>
+              <option value="settlement">فقط دریافت وجه / تسویه</option>
             </select>
 
             <select id="filter-status" style="flex: 1; min-width: 140px;">
@@ -377,7 +446,13 @@
         <div class="card">
           <div class="card-header">
             <h2 class="card-title">طرف‌حساب‌ها و مشتریان</h2>
-            <button id="btn-add-person" class="btn btn-sm btn-primary">+ افزودن طرف حساب</button>
+            <div style="display: flex; gap: 8px;">
+              <button id="btn-people-quick-settle" class="btn btn-sm btn-success" style="display: flex; align-items: center; gap: 6px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>
+                <span>+ ثبت دریافت وجه / واریزی</span>
+              </button>
+              <button id="btn-add-person" class="btn btn-sm btn-primary">+ افزودن طرف حساب</button>
+            </div>
           </div>
 
           <div style="display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
