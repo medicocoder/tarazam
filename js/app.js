@@ -1943,8 +1943,6 @@
 
     async function checkSecurityLock() {
       const lockScreen = document.getElementById('app-lock-screen');
-      const loginSection = document.getElementById('lock-login-section');
-      const changeSection = document.getElementById('lock-change-section');
       const passInput = document.getElementById('lock-password-input');
       const errorMsg = document.getElementById('lock-error-msg');
 
@@ -1954,14 +1952,12 @@
       // Check if session is already authenticated in this browser tab
       const sessionAuth = sessionStorage.getItem('tarazam_auth');
       if (sessionAuth === 'true') {
-        lockScreen.style.display = 'none';
+        if (lockScreen) lockScreen.style.display = 'none';
         return;
       }
 
       // Show lock screen
-      lockScreen.style.display = 'flex';
-      loginSection.style.display = 'block';
-      changeSection.style.display = 'none';
+      if (lockScreen) lockScreen.style.display = 'flex';
     }
 
     // Lock Form Submit Handler (Unlock app)
@@ -1976,76 +1972,15 @@
 
       if (enteredHash === activeHash) {
         sessionStorage.setItem('tarazam_auth', 'true');
-        lockScreen.style.display = 'none';
+        if (lockScreen) lockScreen.style.display = 'none';
         showToast('خوش آمدید!');
       } else {
-        errorMsg.textContent = 'رمز عبور اشتباه است.';
-        errorMsg.style.display = 'block';
-        document.getElementById('lock-password-input').focus();
+        if (errorMsg) {
+          errorMsg.textContent = 'رمز عبور اشتباه است.';
+          errorMsg.style.display = 'block';
+        }
+        document.getElementById('lock-password-input')?.focus();
       }
-    });
-
-    // Toggle Change Password view on Lock Screen
-    document.getElementById('btn-show-change-pass')?.addEventListener('click', () => {
-      document.getElementById('lock-login-section').style.display = 'none';
-      const changeSection = document.getElementById('lock-change-section');
-      changeSection.style.display = 'block';
-      document.getElementById('lock-change-form').reset();
-      document.getElementById('lock-change-error').style.display = 'none';
-      document.getElementById('lock-change-success').style.display = 'none';
-    });
-
-    document.getElementById('btn-back-to-login')?.addEventListener('click', () => {
-      document.getElementById('lock-change-section').style.display = 'none';
-      document.getElementById('lock-login-section').style.display = 'block';
-    });
-
-    // Change Password on Lock Screen Submit Handler
-    document.getElementById('lock-change-form')?.addEventListener('submit', async e => {
-      e.preventDefault();
-      const currPass = document.getElementById('change-curr-pass')?.value;
-      const newPass = document.getElementById('change-new-pass')?.value;
-      const confirmPass = document.getElementById('change-confirm-pass')?.value;
-
-      const errEl = document.getElementById('lock-change-error');
-      const succEl = document.getElementById('lock-change-success');
-      errEl.style.display = 'none';
-      succEl.style.display = 'none';
-
-      const activeHash = await getActivePasswordHash();
-      const currHashed = await hashPassword(currPass);
-
-      if (currHashed !== activeHash) {
-        errEl.textContent = 'رمز عبور فعلی اشتباه است.';
-        errEl.style.display = 'block';
-        return;
-      }
-
-      if (!newPass || newPass.length < 4) {
-        errEl.textContent = 'رمز عبور جدید باید حداقل ۴ کاراکتر باشد.';
-        errEl.style.display = 'block';
-        return;
-      }
-
-      if (newPass !== confirmPass) {
-        errEl.textContent = 'تکرار رمز عبور جدید همخوانی ندارد.';
-        errEl.style.display = 'block';
-        return;
-      }
-
-      // Save new hash locally in this browser (never committed to Git)
-      const newHash = await hashPassword(newPass);
-      await TarazamStorage.saveItem('settings', { key: 'security_pin', value: newHash });
-
-      succEl.textContent = 'رمز عبور جدید با موفقیت در این دستگاه ذخیره شد!';
-      succEl.style.display = 'block';
-
-      setTimeout(() => {
-        document.getElementById('lock-change-section').style.display = 'none';
-        document.getElementById('lock-login-section').style.display = 'block';
-        document.getElementById('lock-password-input').value = newPass;
-        document.getElementById('btn-lock-submit').click();
-      }, 1200);
     });
 
     // Lock Button in Header
@@ -2058,23 +1993,32 @@
     // Toggle password view
     document.getElementById('btn-toggle-lock-pass')?.addEventListener('click', () => {
       const input = document.getElementById('lock-password-input');
-      input.type = input.type === 'password' ? 'text' : 'password';
+      if (input) input.type = input.type === 'password' ? 'text' : 'password';
     });
 
-    // Change Password in Settings Tab
+    // Change Password in Settings Tab (Available only after login)
     document.getElementById('btn-save-password')?.addEventListener('click', async () => {
+      const currPass = document.getElementById('setting-curr-pass')?.value;
       const newPass = document.getElementById('setting-new-pass')?.value;
       const confirmPass = document.getElementById('setting-confirm-pass')?.value;
+
+      const activeHash = await getActivePasswordHash();
+      const currHashed = await hashPassword(currPass);
+
+      if (currHashed !== activeHash) {
+        return showToast('رمز عبور فعلی اشتباه است.', 'error');
+      }
 
       if (!newPass || newPass.length < 4) {
         return showToast('رمز عبور جدید باید حداقل ۴ کاراکتر باشد.', 'error');
       }
       if (newPass !== confirmPass) {
-        return showToast('تکرار رمز عبور مطابقت ندارد.', 'error');
+        return showToast('تکرار رمز عبور جدید همخوانی ندارد.', 'error');
       }
 
       const hashed = await hashPassword(newPass);
       await TarazamStorage.saveItem('settings', { key: 'security_pin', value: hashed });
+      document.getElementById('setting-curr-pass').value = '';
       document.getElementById('setting-new-pass').value = '';
       document.getElementById('setting-confirm-pass').value = '';
       showToast('رمز عبور جدید با موفقیت در این دستگاه ذخیره شد.');

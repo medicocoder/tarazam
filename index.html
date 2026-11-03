@@ -680,24 +680,28 @@
           <div class="card-header">
             <h2 class="card-title">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-              امنیت و رمز عبور ورود
+              امنیت و تغییر رمز عبور ورود
             </h2>
           </div>
           <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
-            جهت حفاظت از اطلاعات مالی روی گیت‌هاب پیجز یا دستگاه‌های مشترک، می‌توانید رمز عبور ورود را تغییر دهید یا فعال کنید.
+            جهت حفاظت از اطلاعات مالی، می‌توانید رمز عبور برنامه را در این دستگاه تغییر دهید. (رمز پیش‌فرض اولیه: <code style="font-weight: 700; color: var(--primary);">AbCd</code>)
           </p>
           <div class="form-grid-3">
             <div class="form-group">
-              <label for="setting-new-pass">رمز عبور جدید</label>
+              <label for="setting-curr-pass">رمز عبور فعلی <span class="required">*</span></label>
+              <input type="password" id="setting-curr-pass" placeholder="رمز فعلی...">
+            </div>
+            <div class="form-group">
+              <label for="setting-new-pass">رمز عبور جدید <span class="required">*</span></label>
               <input type="password" id="setting-new-pass" placeholder="حداقل ۴ کاراکتر...">
             </div>
             <div class="form-group">
-              <label for="setting-confirm-pass">تکرار رمز عبور جدید</label>
-              <input type="password" id="setting-confirm-pass" placeholder="تکرار رمز عبور...">
+              <label for="setting-confirm-pass">تکرار رمز عبور جدید <span class="required">*</span></label>
+              <input type="password" id="setting-confirm-pass" placeholder="تکرار رمز جدید...">
             </div>
-            <div class="form-group" style="align-self: flex-end;">
-              <button type="button" id="btn-save-password" class="btn btn-primary">ثبت / تغییر رمز عبور</button>
-            </div>
+          </div>
+          <div style="margin-top: 14px;">
+            <button type="button" id="btn-save-password" class="btn btn-primary" style="padding: 10px 24px;">تغییر و ثبت رمز عبور جدید</button>
           </div>
         </div>
       </section>
@@ -756,45 +760,6 @@
 
         <button type="submit" id="btn-lock-submit" class="btn btn-primary" style="padding: 12px; font-size: 15px; margin-top: 6px;">
           ورود به برنامه
-        </button>
-
-        <button type="button" id="btn-show-change-pass" style="background: none; border: none; color: var(--accent); font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 8px; text-decoration: underline;">
-          تغییر رمز عبور در این دستگاه
-        </button>
-      </form>
-    </div>
-
-    <!-- State 2: Change Password Form (Directly on lock screen) -->
-    <div id="lock-change-section" style="display: none;">
-      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
-        رمز جدید فقط در حافظه مرورگر همین دستگاه ذخیره می‌شود و در ریپازیتوری دیده نخواهد شد.
-      </p>
-
-      <form id="lock-change-form" style="display: flex; flex-direction: column; gap: 12px; text-align: right;">
-        <div class="form-group">
-          <label for="change-curr-pass">رمز عبور فعلی</label>
-          <input type="password" id="change-curr-pass" placeholder="رمز فعلی..." required style="width: 100%; font-size: 14px;">
-        </div>
-
-        <div class="form-group">
-          <label for="change-new-pass">رمز عبور جدید</label>
-          <input type="password" id="change-new-pass" placeholder="رمز جدید (حداقل ۴ کاراکتر)..." required style="width: 100%; font-size: 14px;">
-        </div>
-
-        <div class="form-group">
-          <label for="change-confirm-pass">تکرار رمز عبور جدید</label>
-          <input type="password" id="change-confirm-pass" placeholder="تکرار رمز جدید..." required style="width: 100%; font-size: 14px;">
-        </div>
-
-        <div id="lock-change-error" style="color: var(--danger); font-size: 12.5px; display: none; font-weight: 600;"></div>
-        <div id="lock-change-success" style="color: var(--success); font-size: 12.5px; display: none; font-weight: 600;"></div>
-
-        <button type="submit" class="btn btn-primary" style="padding: 11px; font-size: 14px; margin-top: 6px;">
-          ذخیره رمز عبور جدید
-        </button>
-
-        <button type="button" id="btn-back-to-login" class="btn btn-secondary" style="padding: 9px; font-size: 13px;">
-          بازگشت به صفحه ورود
         </button>
       </form>
     </div>
